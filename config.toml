@@ -37,6 +37,12 @@ pygmentsCodefencesGuessSyntax = true
   url = "/"
 
   [[menu.main]]
+  name = "Posts"
+  weight = 200
+  identifier = "posts"
+  url = "/post/"
+
+  [[menu.main]]
   name = "About"
   weight = 300
   identifier = "about"

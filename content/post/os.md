@@ -13,7 +13,7 @@ We used 2 youtube videos as references.
 After carefully watching and follwing the procedure, I built a simple operating system that prints 
 the logo of NUST using characters (alphabetic, *,  and / etc on the screen as was given in the image attached).  
 This is the github repo to my OS https://github.com/maliktafheem/Operating-System  
-{{< figure src="/images/os2.png">}}  
+ 
   
 #### Some of the important points are explained below.  
 * Softwares we used:
@@ -41,3 +41,6 @@ This is the github repo to my OS https://github.com/maliktafheem/Operating-Syste
 * First we set up a stack that will allow us to link in with 'C' code.
 * We first check that we've been loaded by a multiboot2 bootloader else we'll display an error message.
 * 
+
+
+{{< figure src="/images/os2.png">}} 

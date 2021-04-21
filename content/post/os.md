@@ -40,7 +40,10 @@ This is the github repo to my OS https://github.com/maliktafheem/Operating-Syste
 * In the second part we printed NUST logo in 64 bit OS.
 * First we set up a stack that will allow us to link in with 'C' code.
 * We first check that we've been loaded by a multiboot2 bootloader else we'll display an error message.
-* 
+* After setting up our stack, our main.asm file is complte
+* Then we create another assembly file for the 64 bit purposes. We copy the 'OK' from 32 bit asm file to 64 bit asm file to test whether we've setup things correctly. If 'OK' prints after movig it to the 64 bit asm file then we've did everything right.
+* Then we set up 'C' code which we use to print our logo made of characters and call it in the 64 bit asm file.
+* Finally we made some slight changes to our makefile for compiling our 'C' code. Then we rebuild our OS and see if it's working fine.
 
 
 {{< figure src="/images/os2.png">}} 

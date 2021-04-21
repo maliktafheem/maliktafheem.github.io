@@ -11,4 +11,6 @@ We used 2 youtube videos as references.
 * https://www.youtube.com/watch?v=wz9CZBeXR6U
 
 After carefully watching and follwing the procedure, I built a simple operating system that prints 
-the logo of SEECS using characters (alphabetic, *,  and / etc on the screen as was given in the image attached).
+the logo of SEECS using characters (alphabetic, *,  and / etc on the screen as was given in the image attached).  
+This is the github repo to my OS https://github.com/maliktafheem/Operating-System  
+{{< figure src="/images/os1.png">}}

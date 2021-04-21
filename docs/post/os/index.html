@@ -130,7 +130,7 @@
                                                 Tue, Apr 20, 2021
                                            </span>
                         <em class="fas fa-stopwatch"></em>
-                        <span class="reading-time">One-minute read</span>
+                        <span class="reading-time">2-minute read</span>
                     </div>
                 
             </div>
@@ -148,6 +148,38 @@ This is the github repo to my OS <a href="https://github.com/maliktafheem/Operat
     <img src="/images/os2.png"/> 
 </figure>
 </p>
+<h4 id="some-of-the-important-points-are-explained-below">Some of the important points are explained below.</h4>
+<ul>
+<li>Softwares we used:
+<ol>
+<li>Docker: Used for containers to create our build-environment.</li>
+<li>QEMU: Emulator and Virtualizer that performs hardware virtualization.</li>
+<li>VSCode: For coding and programming purpose.</li>
+</ol>
+</li>
+<li>We used NASM to complile our assembly code and C to print our logo.</li>
+<li>To build our final ISO file we used GRUB.</li>
+<li>We first build a 32 bit OS later we&rsquo;ll switch it to 64 bit mode.</li>
+<li>Added magic data into an assembly file so that bootloaders can understand we have an OS that can be run on our computer.</li>
+<li>We followed multiboot 2 specifications which most bootloaders support.</li>
+<li>We created another assembly file (main.asm) that will be the entry point into our OS.</li>
+<li>For the first part we just printed &lsquo;OK&rsquo;(0x2f4b2f4f).</li>
+<li>In order to print some characters on the screen we directly wrote to the video memory (0xb8000- begining address). The CPU hooks the text in this memory upto our screen.</li>
+<li>We created a linker file which will describe how to link our OS together.</li>
+<li>We created a grub config file which in turn will create an ISO file out of our OS. We can use the ISO file to run our OS anywhere.</li>
+<li>We then wrote commands for building our OS and included all that in a makefile.</li>
+<li>Finally we ran the OS and printed &lsquo;OK&rsquo; as shown below.</li>
+</ul>
+<figure>
+    <img src="/images/os3.png"/> 
+</figure>
+
+<ul>
+<li>In the second part we printed NUST logo in 64 bit OS.</li>
+<li>First we set up a stack that will allow us to link in with &lsquo;C&rsquo; code.</li>
+<li>We first check that we&rsquo;ve been loaded by a multiboot2 bootloader else we&rsquo;ll display an error message.</li>
+<li></li>
+</ul>
 </div>
         <div class="post-footer">
             <div class="info">

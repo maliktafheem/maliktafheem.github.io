@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Request permanent deletion of your Budget Buddy account and all data.">
+  <title>Delete Account — Budget Buddy</title>
+  <link rel="icon" type="image/png" href="favicon.png"/>
+  <style>
+    :root {
+      --brand: #6E1B3A;
+      --brand-dark: #54142C;
+      --danger: #b3261e;
+      --ink: #1f2329;
+      --muted: #5b6470;
+      --bg: #f6f4f5;
+      --card: #ffffff;
+      --border: #e7e2e4;
+    }
+    * { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+      line-height: 1.6;
+    }
+    a { color: var(--brand); }
+    a:hover { color: var(--brand-dark); }
+    header.banner {
+      background: var(--brand);
+      color: #fff;
+      padding: 28px 20px;
+    }
+    header.banner .inner { max-width: 620px; margin: 0 auto; }
+    header.banner h1 { margin: 0 0 4px; font-size: 1.55rem; }
+    header.banner .sub { opacity: 0.92; font-size: 0.95rem; }
+    main { max-width: 620px; margin: 0 auto; padding: 24px 20px 64px; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 22px;
+      margin-bottom: 18px;
+    }
+    h2 { color: var(--brand); font-size: 1.15rem; margin-top: 0; }
+    label { display: block; font-weight: 600; margin: 14px 0 6px; }
+    input[type="email"], input[type="text"] {
+      width: 100%;
+      padding: 12px 14px;
+      font-size: 1rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-family: inherit;
+    }
+    input:focus { outline: 2px solid var(--brand); border-color: var(--brand); }
+    button {
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 8px;
+      padding: 13px 18px;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 16px;
+    }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-primary { background: var(--brand); color: #fff; }
+    .btn-primary:hover:not(:disabled) { background: var(--brand-dark); }
+    .btn-danger { background: var(--danger); color: #fff; }
+    .btn-danger:hover:not(:disabled) { background: #8c1d17; }
+    .btn-link {
+      background: transparent;
+      color: var(--muted);
+      width: auto;
+      padding: 8px 0;
+      text-decoration: underline;
+    }
+    .nav-links { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
+    .nav-links a {
+      text-decoration: none;
+      border: 1px solid var(--brand);
+      color: var(--brand);
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 0.92rem;
+      font-weight: 600;
+    }
+    .nav-links a:hover { background: var(--brand); color: #fff; }
+    .note {
+      background: #fff8e6;
+      border: 1px solid #f0dca0;
+      border-left: 4px solid #d8a72b;
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-size: 0.92rem;
+      color: #6a5410;
+      margin: 14px 0;
+    }
+    .danger-note {
+      background: #fdeceb;
+      border: 1px solid #f3c6c3;
+      border-left: 4px solid var(--danger);
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-size: 0.95rem;
+      color: #7a1611;
+      margin: 14px 0;
+    }
+    .status {
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin-top: 14px;
+      font-size: 0.95rem;
+      display: none;
+    }
+    .status.show { display: block; }
+    .status.error { background: #fdeceb; border: 1px solid #f3c6c3; color: #7a1611; }
+    .status.success { background: #e8f5ec; border: 1px solid #b9e0c5; color: #1c5b32; }
+    .status.info { background: #eef1f6; border: 1px solid #d3dae6; color: #2c3a52; }
+    .muted { color: var(--muted); font-size: 0.9rem; }
+    .signed-in-as { font-weight: 600; word-break: break-all; }
+    code { background: #f1eef0; padding: 1px 5px; border-radius: 4px; }
+    .hidden { display: none !important; }
+    ul { padding-left: 22px; }
+    li { margin: 5px 0; }
+    @media (max-width: 480px) {
+      header.banner h1 { font-size: 1.35rem; }
+      .card { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <!--
+    ============================================================================
+    SECURITY MODEL — READ BEFORE EDITING.
+    ============================================================================
+    This page NEVER deletes an account based on a typed email address alone.
+
+    Deletion is ONLY possible after BOTH of these are true:
+      1. The user authenticates by clicking the magic / OTP sign-in link sent to
+         their email. Receiving and clicking that link PROVES they own the email
+         address and produces a real Supabase session (a verified JWT).
+      2. The deletion is performed by the EXISTING deployed `delete-account` edge
+         function, which verifies that JWT server-side and deletes ONLY the
+         AUTHENTICATED user (auth.uid()) — it ignores any client-supplied id or
+         address. It expects body {"confirmation":"DELETE"} over POST.
+
+    Therefore this page:
+      - Uses ONLY the public ANON key. The anon key is safe to ship in client
+        code. NEVER put the service-role key here.
+      - Has NO endpoint that deletes by email or uid. The only delete call is
+        supabase.functions.invoke('delete-account', ...), which authorizes via
+        the session JWT that Supabase attaches automatically.
+      - Reveals the destructive button ONLY once a real authenticated session
+        exists (getSession() / onAuthStateChange), i.e. after the link is clicked.
+
+    DO NOT add any "delete by email" or "delete by uid" path. DO NOT introduce a
+    service-role key. Doing either would turn this into an
+    account-deletion-by-email-address vulnerability.
+    ============================================================================
+  -->
+  <header class="banner">
+    <div class="inner">
+      <h1>Delete your Budget Buddy account</h1>
+      <div class="sub">Permanently remove your account and all of your data.</div>
+    </div>
+  </header>
+
+  <main>
+    <div class="nav-links">
+      <a href="index.html">&larr; Home</a>
+      <a href="privacy.html">Privacy Policy</a>
+    </div>
+
+    <div class="card">
+      <h2>What gets deleted</h2>
+      <p>Deleting your account is <strong>permanent and cannot be undone</strong>. It removes:</p>
+      <ul>
+        <li>Your account and profile (email, phone, name, date of birth, country, occupation)</li>
+        <li>All of your financial data — expenses, incomes, budgets, allocations, categories, and LIFE targets</li>
+        <li>Your saved preferences</li>
+      </ul>
+      <p class="muted">You can also delete your account from inside the app: <strong>Settings &rarr; Profile &rarr; Danger Zone</strong>. This web page exists so you can request deletion even if you no longer have the app installed.</p>
+    </div>
+
+    <!-- STATE: idle / link-sent — request the magic link -->
+    <div class="card" id="step-email">
+      <h2>Step 1 — Verify it's you</h2>
+      <p>Enter the email address for your account. We'll send you a secure sign-in link. You can only delete your account after you click that link, which proves you own the email.</p>
+      <div class="note">
+        We never delete an account from a typed email alone — you must confirm ownership via the emailed link first.
+      </div>
+      <label for="email">Account email</label>
+      <input type="email" id="email" autocomplete="email" placeholder="you@example.com" />
+      <button class="btn-primary" id="send-link-btn">Send me a secure sign-in link</button>
+      <div class="status" id="email-status"></div>
+    </div>
+
+    <!-- STATE: authenticated-confirm / deleting / done — perform deletion -->
+    <div class="card hidden" id="step-confirm">
+      <h2>Step 2 — Confirm deletion</h2>
+      <p>Signed in as <span class="signed-in-as" id="signed-in-email">—</span></p>
+      <div class="danger-note">
+        This will <strong>permanently delete</strong> your account and <strong>all</strong> of your data. This action is <strong>irreversible</strong>.
+      </div>
+      <label for="confirm-input">Type <code>DELETE</code> to confirm</label>
+      <input type="text" id="confirm-input" autocomplete="off" autocapitalize="characters" placeholder="DELETE" />
+      <button class="btn-danger" id="delete-btn" disabled>Permanently delete my account and all data</button>
+      <button class="btn-link" id="signout-btn">Cancel and sign out</button>
+      <div class="status" id="delete-status"></div>
+    </div>
+
+    <!-- STATE: done -->
+    <div class="card hidden" id="step-done">
+      <h2>Account deleted</h2>
+      <div class="status success show">
+        Your account and all associated data have been permanently deleted. You have been signed out.
+      </div>
+      <p class="muted">You can close this page. If you change your mind, you're welcome to sign up again in the app at any time.</p>
+      <div class="nav-links" style="margin-top:16px;">
+        <a href="index.html">&larr; Back to Home</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="muted">Questions about your data? See our <a href="privacy.html">Privacy Policy</a> or contact <a href="mailto:support@budgetbuddy.app">support@budgetbuddy.app</a>.</p>
+    </div>
+  </main>
+
+  <!-- Supabase JS v2 (the ONLY external dependency on this page). -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // ---- Operator config (fill these in at host time) -------------------------
+    // The anon key is PUBLIC and safe to expose in client-side code.
+    // NEVER place a service-role key here.
+    const SUPABASE_URL = "https://vklmudyoebuckotwlmzi.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZrbG11ZHlvZWJ1Y2tvdHdsbXppIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg2Mzk2NjcsImV4cCI6MjA4NDIxNTY2N30.Deer_brR_Nz42oJectDBY3QEhnNkkNDcOSTvzSAyqm4";
+    // ---------------------------------------------------------------------------
+
+    // Elements
+    const stepEmail    = document.getElementById("step-email");
+    const stepConfirm  = document.getElementById("step-confirm");
+    const stepDone     = document.getElementById("step-done");
+    const emailInput   = document.getElementById("email");
+    const sendLinkBtn  = document.getElementById("send-link-btn");
+    const emailStatus  = document.getElementById("email-status");
+    const signedInEmail= document.getElementById("signed-in-email");
+    const confirmInput = document.getElementById("confirm-input");
+    const deleteBtn    = document.getElementById("delete-btn");
+    const signoutBtn   = document.getElementById("signout-btn");
+    const deleteStatus = document.getElementById("delete-status");
+
+    function setStatus(el, msg, kind) {
+      el.textContent = msg;
+      el.className = "status show " + (kind || "info");
+    }
+    function clearStatus(el) {
+      el.textContent = "";
+      el.className = "status";
+    }
+
+    // Guard: bail out clearly if the operator hasn't configured the page yet.
+    const configured =
+      SUPABASE_URL && SUPABASE_URL.indexOf("__") !== 0 &&
+      SUPABASE_ANON_KEY && SUPABASE_ANON_KEY.indexOf("__") !== 0;
+
+    let supabase = null;
+    if (configured && window.supabase && window.supabase.createClient) {
+      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    }
+
+    if (!configured) {
+      setStatus(
+        emailStatus,
+        "This deletion page has not been configured yet. If you are a user, please contact support@budgetbuddy.app to request deletion.",
+        "error"
+      );
+      sendLinkBtn.disabled = true;
+    } else if (!supabase) {
+      setStatus(
+        emailStatus,
+        "Could not load the secure connection. Please check your network and reload the page.",
+        "error"
+      );
+      sendLinkBtn.disabled = true;
+    }
+
+    // ---- UI state transitions -------------------------------------------------
+    // Show the destructive confirm step ONLY when a real authenticated session
+    // exists. A session only exists after the user clicked the emailed link.
+    function showAuthenticated(session) {
+      const email = session && session.user ? (session.user.email || "your account") : "your account";
+      signedInEmail.textContent = email;
+      stepEmail.classList.add("hidden");
+      stepConfirm.classList.remove("hidden");
+      stepDone.classList.add("hidden");
+    }
+    function showUnauthenticated() {
+      stepEmail.classList.remove("hidden");
+      stepConfirm.classList.add("hidden");
+      stepDone.classList.add("hidden");
+    }
+    function showDone() {
+      stepEmail.classList.add("hidden");
+      stepConfirm.classList.add("hidden");
+      stepDone.classList.remove("hidden");
+    }
+
+    // ---- Step 1: send the magic link -----------------------------------------
+    async function sendLink() {
+      if (!supabase) return;
+      const email = (emailInput.value || "").trim();
+      if (!email) {
+        setStatus(emailStatus, "Please enter your account email address.", "error");
+        return;
+      }
+      sendLinkBtn.disabled = true;
+      setStatus(emailStatus, "Sending your secure sign-in link…", "info");
+
+      // signInWithOtp emails a magic link. Clicking it returns the user to THIS
+      // page with an authenticated session. No password, no account is touched yet.
+      const { error } = await supabase.auth.signInWithOtp({
+        email: email,
+        options: {
+          // Return to this exact page after the user clicks the link.
+          emailRedirectTo: window.location.origin + window.location.pathname,
+          // Do NOT create a brand-new user from this deletion page.
+          shouldCreateUser: false,
+        },
+      });
+
+      if (error) {
+        sendLinkBtn.disabled = false;
+        setStatus(emailStatus, "Could not send the link: " + error.message, "error");
+        return;
+      }
+
+      setStatus(
+        emailStatus,
+        "Check your email. We've sent a secure sign-in link to " + email +
+        ". Open it on this device to continue. You can close this tab — the link will bring you back here.",
+        "success"
+      );
+    }
+
+    // ---- Step 2: enable delete only when 'DELETE' is typed --------------------
+    function syncDeleteButton() {
+      deleteBtn.disabled = confirmInput.value.trim() !== "DELETE";
+    }
+
+    // ---- Step 2: perform the deletion ----------------------------------------
+    // The ONLY deletion path on this page. It calls the existing JWT-verified
+    // edge function, which deletes the AUTHENTICATED user — never an arbitrary
+    // address. The session JWT is attached automatically by supabase-js.
+    async function performDelete() {
+      if (!supabase) return;
+      if (confirmInput.value.trim() !== "DELETE") return;
+
+      // Defense in depth: never call delete without a live authenticated session.
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        setStatus(deleteStatus, "Your session has expired. Please request a new sign-in link.", "error");
+        showUnauthenticated();
+        return;
+      }
+
+      deleteBtn.disabled = true;
+      confirmInput.disabled = true;
+      setStatus(deleteStatus, "Deleting your account and all data… please wait.", "info");
+
+      const { error } = await supabase.functions.invoke("delete-account", {
+        body: { confirmation: "DELETE" },
+      });
+
+      if (error) {
+        deleteBtn.disabled = false;
+        confirmInput.disabled = false;
+        setStatus(deleteStatus, "Deletion failed: " + error.message + " Please try again or contact support@budgetbuddy.app.", "error");
+        return;
+      }
+
+      // Success: sign out and show the done state.
+      try { await supabase.auth.signOut(); } catch (_e) { /* best-effort */ }
+      showDone();
+    }
+
+    // ---- Wire up events -------------------------------------------------------
+    sendLinkBtn.addEventListener("click", sendLink);
+    emailInput.addEventListener("keydown", function (e) { if (e.key === "Enter") sendLink(); });
+    confirmInput.addEventListener("input", syncDeleteButton);
+    deleteBtn.addEventListener("click", performDelete);
+    signoutBtn.addEventListener("click", async function () {
+      if (supabase) { try { await supabase.auth.signOut(); } catch (_e) {} }
+      confirmInput.value = "";
+      syncDeleteButton();
+      showUnauthenticated();
+      clearStatus(emailStatus);
+    });
+
+    // ---- On load: detect whether the user is already authenticated -----------
+    // If they arrived via the magic link, a session will exist (or arrive
+    // shortly via onAuthStateChange) and we reveal the destructive step.
+    if (supabase) {
+      supabase.auth.getSession().then(function (res) {
+        const session = res && res.data ? res.data.session : null;
+        if (session) showAuthenticated(session);
+        else showUnauthenticated();
+      });
+
+      supabase.auth.onAuthStateChange(function (_event, session) {
+        if (session) {
+          showAuthenticated(session);
+        } else if (stepDone.classList.contains("hidden")) {
+          // No session: return to the email step, unless we're already on the
+          // "account deleted" done screen (where sign-out is expected).
+          showUnauthenticated();
+        }
+      });
+    }
+  </script>
+</body>
+</html>
